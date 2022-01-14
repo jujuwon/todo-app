@@ -1,5 +1,7 @@
 package com.example.todoapp.service;
 
+import java.util.List;
+
 import com.example.todoapp.model.TodoEntity;
 import com.example.todoapp.persistence.TodoRepository;
 
@@ -14,6 +16,29 @@ public class TodoService {
 
     @Autowired
     private TodoRepository repository;
+
+    public List<TodoEntity> create(final TodoEntity entity) {
+        // Validations
+        validate(entity);
+
+        repository.save(entity);
+
+        log.info("Entity Id : {} is saved.", entity.getId());
+
+        return repository.findByUserId(entity.getUserId());
+    }
+
+    private void validate(final TodoEntity entity) {
+        if(entity == null) {
+            log.warn("Entity cannot be null.");
+            throw new RuntimeException("Entity cannot be null.");
+        }
+
+        if(entity.getUserId() == null) {
+            log.warn("Unknown user.");
+            throw new RuntimeException("Entity cannot be null.");
+        }
+    }
     
     public String testService() {
         // TodoEntity 생성

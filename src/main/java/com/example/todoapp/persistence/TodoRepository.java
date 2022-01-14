@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TodoRepository extends JpaRepository<TodoEntity, String>{
-    @Query("SELECT * FROM Todo t where t.userId = ?1")
+public interface TodoRepository extends JpaRepository<TodoEntity, String> {
+    // @Query("SELECT * FROM Todo t where t.userId = ?1")
     List<TodoEntity> findByUserId(String userId);
 }
