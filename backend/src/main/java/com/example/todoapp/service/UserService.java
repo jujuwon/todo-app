@@ -27,4 +27,8 @@ public class UserService {
 
         return userRepository.save(userEntity);
     }
+
+    public UserEntity getByCredentials(final String email, final String password) {
+        return userRepository.findByEmailAndPassword(email, password);
+    }
 }
