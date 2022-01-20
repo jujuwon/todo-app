@@ -1,7 +1,6 @@
 package com.example.todoapp.security;
 
 import java.io.IOException;
-import java.security.Security;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -14,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -43,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                 log.info("Authenticated user ID : " + userId);
                 // 인증 완료. SecurityContextHolder 에 등록해야 인증된 사용자로 여김
                 AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    userId, // 인증된 사용자 정보. 보통은 UserDetails 라는 오브젝트를 넣음
+                    userId, // AuthenticationPrincipal : 인증된 사용자 정보. 보통은 UserDetails 라는 오브젝트를 넣음
                     null,
                     AuthorityUtils.NO_AUTHORITIES
                 );

@@ -13,6 +13,7 @@ import com.example.todoapp.service.TodoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,19 +37,16 @@ public class TodoController {
     }
     
     @PostMapping
-    public ResponseEntity<?> createTodo(@RequestBody TodoDTO dto) {
+    public ResponseEntity<?> createTodo(@AuthenticationPrincipal String userId, @RequestBody TodoDTO dto) {
         try {
-            String temporaryUserId = "temporary-user";
-
             // (1) TodoEntity 로 변환
             TodoEntity entity = TodoDTO.toEntity(dto);
             
             // (2) id 를 null 로 초기화
             entity.setId(null);
 
-            // (3) 임시 사용자 아이디 설정
-            // todo 인증 부분은 후에 추가
-            entity.setUserId(temporaryUserId);
+            // (3) 사용자 아이디 설정
+            entity.setUserId(userId);
 
             // (4) 서비스를 이용해 Todo 엔티티 생성
             List<TodoEntity> entities = service.create(entity);
@@ -63,6 +61,7 @@ public class TodoController {
             return ResponseEntity.ok().body(response);
 
         } catch (Exception e) {
+            // 예외가 있는 경우 dto 대신 error 메시지 리턴
             String error = e.getMessage();
             ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().error(error).build();
             return ResponseEntity.badRequest().body(response);
@@ -87,15 +86,13 @@ public class TodoController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateTodo(@RequestBody TodoDTO dto) {
-        String temporaryUserId = "temporary-user";
-
+    public ResponseEntity<?> updateTodo(@AuthenticationPrincipal String userId, @RequestBody TodoDTO dto) {
         // (1) dto 를 entity 로 변환
         TodoEntity entity = TodoDTO.toEntity(dto);
 
         // (2) id 를 temporaryUserId 로 초기화
         // 이 부분은 후에 인증 추가
-        entity.setUserId(temporaryUserId);
+        entity.setUserId(userId);
 
         // (3) 서비스를 이용해 entity 를 업데이트
         List<TodoEntity> entities = service.update(entity);
@@ -111,16 +108,13 @@ public class TodoController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteTodo(@RequestBody TodoDTO dto) {
+    public ResponseEntity<?> deleteTodo(@AuthenticationPrincipal String userId, @RequestBody TodoDTO dto) {
         try {
-            String temporaryUserId = "temporary-user";
-
             // (1) TodoEntity 로 변환
             TodoEntity entity = TodoDTO.toEntity(dto);
 
-            // (2) 임시 사용자 아이디 설정
-            // 후에 인증 부분 추가
-            entity.setUserId(temporaryUserId);
+            // (2) 사용자 아이디 설정
+            entity.setUserId(userId);
 
             // (3) 서비스를 이용해 entity 삭제
             List<TodoEntity> entities = service.delete(entity);

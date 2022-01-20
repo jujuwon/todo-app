@@ -1,7 +1,5 @@
 package com.example.todoapp.dto;
 
-import org.checkerframework.dataflow.qual.SideEffectFree;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
