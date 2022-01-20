@@ -1,14 +1,13 @@
 package com.example.todoapp.controller;
 
-import javax.persistence.PostPersist;
 
 import com.example.todoapp.dto.ResponseDTO;
 import com.example.todoapp.dto.UserDTO;
 import com.example.todoapp.model.UserEntity;
+import com.example.todoapp.security.TokenProvider;
 import com.example.todoapp.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +23,9 @@ public class UserController {
     
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
@@ -58,9 +60,12 @@ public class UserController {
             userDTO.getPassword());
         
             if(user != null) {
+                // 토큰 생성
+                final String token = tokenProvider.create(user);
                 final UserDTO responseUserDTO = UserDTO.builder()
                                 .email(user.getEmail())
                                 .id(user.getId())
+                                .token(token)
                                 .build();
                 return ResponseEntity.ok().body(responseUserDTO);
             } else {
